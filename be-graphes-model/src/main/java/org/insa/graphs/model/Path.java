@@ -30,12 +30,34 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
+ 
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+        if (nodes.size()==1) {
+        	return new Path(graph,nodes.get(0));
+        }
+        if(nodes.size()==0) {
+        	return new Path(graph);
+        }
+
+        Node current = nodes.get(0);
+        
+        while(current!=nodes.get(nodes.size()-1)) {
+        	Arc arc_min=null;
+        	double min_time = Double.MAX_VALUE;
+        	for (Arc a : current.getSuccessors()) {
+        		if(min_time>a.getMinimumTravelTime()) {
+        			arc_min = a;
+        			min_time=arc_min.getMinimumTravelTime();
+        			
+        		}
+        	}
+        	
+        	arcs.add(arc_min);
+        	current = arc_min.getDestination();
+        }
         return new Path(graph, arcs);
     }
 
@@ -51,12 +73,36 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
+    
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
         
+        if (nodes.size()==1) {
+        	return new Path(graph,nodes.get(0));
+        }
+        if(nodes.size()==0) {
+        	return new Path(graph);
+        }
+        
+        
+        Node current = nodes.get(0);
+        
+        while(current!=nodes.get(nodes.size()-1)) {
+        	Arc arc_min=null;
+        	float min_length = Float.MAX_VALUE;
+        	for (Arc a : current.getSuccessors()) {
+        		if(min_length>a.getLength()) {
+        			arc_min = a;
+        			min_length=arc_min.getLength();
+        			
+        		}
+        	}
+        	arcs.add(arc_min);
+        	current = arc_min.getDestination();
+        }
+
         return new Path(graph, arcs);
     }
 

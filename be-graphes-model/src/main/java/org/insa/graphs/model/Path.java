@@ -42,22 +42,32 @@ public class Path {
         	return new Path(graph);
         }
 
-        Node current = nodes.get(0);
-        
-        while(current!=nodes.get(nodes.size()-1)) {
-        	Arc arc_min=null;
-        	double min_time = Double.MAX_VALUE;
-        	for (Arc a : current.getSuccessors()) {
-        		if(min_time>a.getMinimumTravelTime()) {
-        			arc_min = a;
-        			min_time=arc_min.getMinimumTravelTime();
-        			
-        		}
-        	}
-        	
-        	arcs.add(arc_min);
-        	current = arc_min.getDestination();
+        else {
+            for(int i=0;i<(nodes.size()-1);i++) {
+
+            	Arc arc_min=null;
+            	double min_time = Double.MAX_VALUE;
+            	for (Arc a : nodes.get(i).getSuccessors()) {
+            		if (a.getDestination().equals(nodes.get(i+1))) {
+            			
+                		if(min_time>a.getMinimumTravelTime()) {
+                			arc_min = a;
+                			min_time=arc_min.getMinimumTravelTime();
+                			
+                		}
+            		}
+
+            	}
+            	
+            	if(arc_min==null) {
+            		throw new IllegalArgumentException();
+            	}
+            	arcs.add(arc_min);
+            	
+
+            }
         }
+
         return new Path(graph, arcs);
     }
 
@@ -82,28 +92,37 @@ public class Path {
         if (nodes.size()==1) {
         	return new Path(graph,nodes.get(0));
         }
-        if(nodes.size()==0) {
+        else if(nodes.size()==0) {
         	return new Path(graph);
         }
-        
-        
-        Node current = nodes.get(0);
-        
-        while(current!=nodes.get(nodes.size()-1)) {
-        	Arc arc_min=null;
-        	float min_length = Float.MAX_VALUE;
-        	for (Arc a : current.getSuccessors()) {
-        		if(min_length>a.getLength()) {
-        			arc_min = a;
-        			min_length=arc_min.getLength();
-        			
-        		}
-        	}
-        	arcs.add(arc_min);
-        	current = arc_min.getDestination();
-        }
+        else {
+    
+    		for(int i=0;i<(nodes.size()-1);i++) {
+            	Arc arc_min=null;
+            	float min_length = Float.MAX_VALUE;
+            	for (Arc a : nodes.get(i).getSuccessors()) {
+            		if (a.getDestination().equals(nodes.get(i+1))) { //l'arc nous mène bien au noeud suivant
+            			if(min_length>a.getLength()) {
+                			arc_min = a;
+                			min_length=arc_min.getLength();
+                			
+                		}
+            		}
+            		
+            	}
+            	if(arc_min==null) {
+            		throw new IllegalArgumentException();
+            	}
+            	arcs.add(arc_min);
+            	
+    		}
 
-        return new Path(graph, arcs);
+        	return new Path(graph, arcs);
+        }
+        
+
+
+        
     }
 
     /**

@@ -37,7 +37,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         labels.get(data.getOrigin().getId()).cout = 0;
         Tas.insert(labels.get(data.getOrigin().getId()));
-        
+        notifyOriginProcessed(data.getOrigin());
         int count = 1;
         Label x = null;
         Label y = null;
@@ -61,7 +61,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	} */
         	
         	x = Tas.deleteMin();
+        	notifyNodeReached(nodes.get(x.sommet_courant));
         	x.marque = true;
+        	
         	if(x ==labels.get(data.getDestination().getId())) {
         		System.out.println("On est à la fin, node n° " + x.sommet_courant);
         		alafin = true;
@@ -81,6 +83,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        				if(oldCost!=Float.MAX_VALUE) {
 	        					System.out.println("remiove y " + y.sommet_courant);
 	        					Tas.remove(y);
+	        					
 	        				}
 	        				
 	        				Tas.insert(y);
@@ -103,6 +106,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	solution = new ShortestPathSolution(data,Status.INFEASIBLE,Path.createShortestPathFromNodes(graph, Node_solu));
         }
         else {
+        	notifyDestinationReached(data.getDestination());
 	        Arc currentArc = x.pere;
 	        Node_solu.add(0,nodes.get(x.sommet_courant));
 	        while(currentArc!=null) {

@@ -23,7 +23,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Graph graph = data.getGraph();
         List<Node>nodes = graph.getNodes();
         List<Label> labels = new ArrayList<Label>();
-        
+        BinaryHeap<Label> Tas = new BinaryHeap<Label>();
         
         //Initialisation on met tous les sommets à faux
         for (Node n : nodes) {
@@ -36,9 +36,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         
         labels.get(data.getOrigin().getId()).cout = 0;
-        labels.get(data.getOrigin().getId()).marque = true;
-        
-        BinaryHeap<Label> Tas = new BinaryHeap<Label>();
         Tas.insert(labels.get(data.getOrigin().getId()));
         
         int count = 1;
@@ -48,7 +45,21 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         //Iterations
         boolean alafin = false;
         
-        while (count<nodes.size() && !alafin) { //tant qu'il existe des sommets non marqués
+        while (!(Tas.isEmpty())&& !alafin) { //tant qu'il existe des sommets non marqués
+        	/*
+        	
+        	for(Label l : labels) {
+        		boolean c =(Tas.contains(l)==-1);
+        		boolean b =(l.cout==Float.MAX_VALUE || l.marque==true);
+        		
+        		if(b!=c) {
+        			
+        			System.out.println("c pas bon" + " "+ b + " " + c + " " + l.sommet_courant + " " + " marque = " + l.marque +  " cout = " + l.cout +"😠" );
+        			throw new IllegalArgumentException();
+
+        		}
+        	} */
+        	
         	x = Tas.deleteMin();
         	x.marque = true;
         	if(x ==labels.get(data.getDestination().getId())) {
@@ -58,14 +69,17 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		
 	        	count++;
 	        	for(Arc a : graph.get(x.sommet_courant).getSuccessors()) { //on parcourt tous les y sucesseurs de x
+	        		if(!(data.isAllowed(a))) {
+	        			continue;
+	        		}
 	        		y = labels.get(a.getDestination().getId());
 	        		if (!(y.marque))  { //si y n'est pas marqué
 	        			float oldCost=y.getCost();
-	        			//y.cout = Math.min(y.cout, x.cout + a.getLength());
-	        			if(y.cout>x.cout + a.getLength()){ //le cost(y) a changé
-	        				System.out.println("UPDATE");
-	        				y.cout = x.cout + a.getLength(); 
+	        			y.cout = Math.min(y.cout, x.cout + a.getLength());
+	        			if(!(y.cout==oldCost)){ //le cost(y) a changé
+	        				
 	        				if(oldCost!=Float.MAX_VALUE) {
+	        					System.out.println("remiove y " + y.sommet_courant);
 	        					Tas.remove(y);
 	        				}
 	        				
@@ -79,21 +93,35 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	
         }
         
+        List<Node> Node_solu = new ArrayList<Node>();
+        List<Arc> Arcs_Solu = new ArrayList<Arc>();
         
         System.out.println(Tas);
         
-        List<Node> Node_solu = new ArrayList<Node>();
-        Node_solu.add(nodes.get(x.sommet_courant));
-        Arc currentArc = x.pere;
-        while(currentArc!=null) {
-	        System.out.println("l'arc actuel : " + currentArc);
-	        System.out.println("son origine : " + currentArc.getOrigin().getId());
-        	System.out.println(currentArc.getOrigin().getId());
-        	Node_solu.add(currentArc.getOrigin());
-        	currentArc = labels.get(currentArc.getOrigin().getId()).pere;
+        if (!alafin) {
+        	//on a pas trouvé de chemin
+        	solution = new ShortestPathSolution(data,Status.INFEASIBLE,Path.createShortestPathFromNodes(graph, Node_solu));
         }
-        
-        solution = new ShortestPathSolution(data,Status.OPTIMAL, Path.createShortestPathFromNodes(graph,Node_solu));
+        else {
+	        Arc currentArc = x.pere;
+	        Node_solu.add(0,nodes.get(x.sommet_courant));
+	        while(currentArc!=null) {
+		        System.out.println("l'arc actuel : " + currentArc);
+		        System.out.println("son origine : " + currentArc.getOrigin().getId());
+	        	System.out.println(currentArc.getOrigin().getId());
+	        	Arcs_Solu.add(0,currentArc);
+	        	Node_solu.add(0,currentArc.getOrigin());
+	        	currentArc = labels.get(currentArc.getOrigin().getId()).pere;
+	        }
+
+	        
+	        System.out.println("solution récupérée : ");
+	        System.out.println(Arcs_Solu);
+	        System.out.println(Node_solu);
+	        Path newPath = Path.createShortestPathFromNodes(graph, Node_solu);//new Path(graph, listArcsSolution);
+	        
+	        solution = new ShortestPathSolution(data, Status.OPTIMAL, newPath);
+        }
         return solution;
     }
 

@@ -21,7 +21,15 @@ public class Label implements Comparable<Label>{
 	}
 	
 	public int compareTo(Label l) {
-		return (int)(this.cout - l.cout);
+		float diff = this.cout - l.cout;
+		if (diff == 0) {
+			return 0;
+		} else if (diff < 0) {
+			return -1;
+		} else {
+			return 1;
+		}
+	
 	}
 	
 }

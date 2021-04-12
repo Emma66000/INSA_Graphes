@@ -110,19 +110,19 @@ public class Path {
             		}
             		
             	}
+            	
             	if(arc_min==null) {
             		throw new IllegalArgumentException();
             	}
+            	
             	arcs.add(arc_min);
             	
     		}
 
-        	return new Path(graph, arcs);
+        	
         }
         
-
-
-        
+        return new Path(graph, arcs);
     }
 
     /**

@@ -37,8 +37,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         labels.get(data.getOrigin().getId()).cout = 0;
         Tas.insert(labels.get(data.getOrigin().getId()));
+        
         notifyOriginProcessed(data.getOrigin());
-        int count = 1;
+        
         Label x = null;
         Label y = null;
         
@@ -46,6 +47,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         boolean alafin = false;
         
         while (!(Tas.isEmpty())&& !alafin) { //tant qu'il existe des sommets non marqués
+        	int count = 0;
         	/*
         	
         	for(Label l : labels) {
@@ -62,6 +64,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	
         	x = Tas.deleteMin();
         	notifyNodeReached(nodes.get(x.sommet_courant));
+        	
+        	//on verifie que les couts sont croissants
+        	System.out.println("cout = " + x.cout);
         	x.marque = true;
         	
         	if(x ==labels.get(data.getDestination().getId())) {
@@ -69,8 +74,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		alafin = true;
         	}else {
         		
-	        	count++;
+	        	
 	        	for(Arc a : graph.get(x.sommet_courant).getSuccessors()) { //on parcourt tous les y sucesseurs de x
+	        		count++;
+	        		
 	        		if(!(data.isAllowed(a))) {
 	        			continue;
 	        		}
@@ -81,7 +88,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        			if(!(y.cout==oldCost)){ //le cost(y) a changé
 	        				
 	        				if(oldCost!=Float.MAX_VALUE) {
-	        					System.out.println("remiove y " + y.sommet_courant);
+	        					System.out.println("remove y: " + y.sommet_courant);
 	        					Tas.remove(y);
 	        					
 	        				}
@@ -91,7 +98,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        			}
 	        			
 	        		}
+	        		
 	        	}
+	        	
+	        	//on verifie le nombre de sucesseurs
+	        	System.out.println("nb de successeurs = " + count + " reel = " + graph.get(x.sommet_courant).getNumberOfSuccessors() );
+	        	
         	}
         	
         }
@@ -99,6 +111,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         List<Node> Node_solu = new ArrayList<Node>();
         List<Arc> Arcs_Solu = new ArrayList<Arc>();
         
+        //on verifie la longueur du plus court chemin de Dijkstra
+        float chemin=0;
         System.out.println(Tas);
         
         if (!alafin) {
@@ -115,6 +129,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        	System.out.println(currentArc.getOrigin().getId());
 	        	Arcs_Solu.add(0,currentArc);
 	        	Node_solu.add(0,currentArc.getOrigin());
+	        	chemin +=currentArc.getLength();
 	        	currentArc = labels.get(currentArc.getOrigin().getId()).pere;
 	        }
 
@@ -124,6 +139,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        System.out.println(Node_solu);
 	        Path newPath = Path.createShortestPathFromNodes(graph, Node_solu);//new Path(graph, listArcsSolution);
 	        
+	        //on verifie que le path est valid et que il fait bien la même taille que celui obtenu avec la methode path
+	        System.out.println("Path valid ? " + newPath.isValid());
+	        System.out.println("Path Length class path ? " + newPath.getLength() + " Dijkstra length ? " + chemin);
 	        solution = new ShortestPathSolution(data, Status.OPTIMAL, newPath);
         }
         return solution;

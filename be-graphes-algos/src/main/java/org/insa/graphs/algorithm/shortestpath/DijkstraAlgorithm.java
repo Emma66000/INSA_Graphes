@@ -51,6 +51,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         boolean alafin = false;
         
         while (!(Tas.isEmpty())&& !alafin) { //tant qu'il existe des sommets non marqués
+        	
+        	System.out.println(Tas.isValid());
+        	
         	int count = 0;
         	/*
         	
@@ -117,7 +120,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         //on verifie la longueur du plus court chemin de Dijkstra
         float chemin=0;
-        System.out.println(Tas);
+        //System.out.println(Tas);
         
         if (!alafin) {
         	//on a pas trouvé de chemin
@@ -128,9 +131,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        Arc currentArc = x.pere;
 	        Node_solu.add(0,nodes.get(x.sommet_courant));
 	        while(currentArc!=null) {
-		        System.out.println("l'arc actuel : " + currentArc);
-		        System.out.println("son origine : " + currentArc.getOrigin().getId());
-	        	System.out.println(currentArc.getOrigin().getId());
+		        //System.out.println("l'arc actuel : " + currentArc);
+		        //System.out.println("son origine : " + currentArc.getOrigin().getId());
+	        	//System.out.println(currentArc.getOrigin().getId());
 	        	Arcs_Solu.add(0,currentArc);
 	        	Node_solu.add(0,currentArc.getOrigin());
 	        	chemin +=currentArc.getLength();

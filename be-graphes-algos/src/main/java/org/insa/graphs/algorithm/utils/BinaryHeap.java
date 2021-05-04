@@ -52,6 +52,7 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
         }
     }
 
+    
     /**
      * @return Index of the parent of the given index.
      */
@@ -118,6 +119,19 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
         }
     }
 
+    public boolean isValid() {
+    	BinaryHeap<E> copie = new BinaryHeap<E>(this);
+    	E min = copie.deleteMin();
+    	while (!(copie.isEmpty())) {
+    		E ancien = min;
+    		min = copie.deleteMin();
+    		if(ancien.compareTo(min)>0) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
     @Override
     public boolean isEmpty() {
         return this.currentSize == 0;

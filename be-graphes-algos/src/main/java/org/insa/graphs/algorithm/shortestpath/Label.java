@@ -20,8 +20,16 @@ public class Label implements Comparable<Label>{
 		return this.cout;
 	}
 	
+	public void setCost(float i) {
+		this.cout = i;
+	}
+	
+	public float getTotalCost() {
+		return this.cout;
+	}
+	
 	public int compareTo(Label l) {
-		float diff = this.cout - l.cout;
+		float diff = this.getTotalCost() - l.getTotalCost();
 		if (diff == 0) {
 			return 0;
 		} else if (diff < 0) {

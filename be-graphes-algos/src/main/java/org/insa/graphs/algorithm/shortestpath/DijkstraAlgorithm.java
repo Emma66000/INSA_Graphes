@@ -12,6 +12,10 @@ import org.insa.graphs.model.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
+	public Label creerLabel(Node n,Node dest) {
+		return  new Label(n.getId());
+	}
+	
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
@@ -27,15 +31,15 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         //Initialisation on met tous les sommets à faux
         for (Node n : nodes) {
-        	Label newLabel = new Label(n.getId());
-        	newLabel.cout = Float.MAX_VALUE;
+        	Label newLabel =creerLabel(n,data.getDestination());
+        	newLabel.setCost(Float.MAX_VALUE);
         	newLabel.marque = false;
         	newLabel.pere = null;
         	labels.add(newLabel);
 
         }
         
-        labels.get(data.getOrigin().getId()).cout = 0;
+        labels.get(data.getOrigin().getId()).setCost(0);
         Tas.insert(labels.get(data.getOrigin().getId()));
         
         notifyOriginProcessed(data.getOrigin());
@@ -66,7 +70,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	notifyNodeReached(nodes.get(x.sommet_courant));
         	
         	//on verifie que les couts sont croissants
-        	System.out.println("cout = " + x.cout);
+        	System.out.println("cout = " + x.getTotalCost());
         	x.marque = true;
         	
         	if(x ==labels.get(data.getDestination().getId())) {
@@ -84,7 +88,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        		y = labels.get(a.getDestination().getId());
 	        		if (!(y.marque))  { //si y n'est pas marqué
 	        			float oldCost=y.getCost();
-	        			y.cout = Math.min(y.cout, x.cout + a.getLength());
+	        			y.cout = Math.min(y.getCost(), x.getCost() + a.getLength());
 	        			if(!(y.cout==oldCost)){ //le cost(y) a changé
 	        				
 	        				if(oldCost!=Float.MAX_VALUE) {

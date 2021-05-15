@@ -1,7 +1,6 @@
 package org.insa.graphs.algorithm.utils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -12,6 +11,7 @@ import java.util.List;
 
 import org.insa.graphs.algorithm.ArcInspector;
 import org.insa.graphs.algorithm.ArcInspectorFactory;
+import org.insa.graphs.algorithm.shortestpath.AStarAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.BellmanFordAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.DijkstraAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathData;
@@ -24,12 +24,10 @@ import org.insa.graphs.model.io.GraphReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
-public class DijkstraAlgorithmTest {
+public class AStarAlgorithmTest {
 	
 	private static Graph graph, graph2;
 	private static List<Node> node_list, node_list2= new ArrayList<Node>();
-	
 	private static GraphReader reader,reader2;
 	
 	@BeforeClass
@@ -45,8 +43,6 @@ public class DijkstraAlgorithmTest {
         graph2 = reader2.read();
         node_list = graph.getNodes();
         node_list2 = graph2.getNodes();
-        
-        
         
             
     }
@@ -83,18 +79,18 @@ public class DijkstraAlgorithmTest {
 		
 		//TEST DE BASE
 		
-		DijkstraAlgorithm D_road;
+		AStarAlgorithm A_road;
 		List<ArcInspector> arcInsp = ArcInspectorFactory.getAllFilters();
 		
 		
 		
 		//infeasible
-		D_road = new DijkstraAlgorithm(new ShortestPathData(graph,node_list.get(1256),node_list.get(1020), arcInsp.get(0)));
-		assertEquals(D_road.run().isFeasible(),false);
+		A_road = new AStarAlgorithm(new ShortestPathData(graph,node_list.get(1256),node_list.get(1020), arcInsp.get(0)));
+		assertEquals(A_road.run().isFeasible(),false);
 		
 		//1seul point
-		D_road = new DijkstraAlgorithm(new ShortestPathData(graph,paire_node.get(0).get(0),paire_node.get(0).get(0), arcInsp.get(0)));
-		assertEquals(D_road.run().isFeasible(),true);
+		A_road = new AStarAlgorithm(new ShortestPathData(graph,paire_node.get(0).get(0),paire_node.get(0).get(0), arcInsp.get(0)));
+		assertEquals(A_road.run().isFeasible(),true);
 		
 		reader.close();
 		
@@ -125,29 +121,31 @@ public class DijkstraAlgorithmTest {
 			
 		
 			//Shortest path, all roads allowed
-			DijkstraAlgorithm D_road_dist = new DijkstraAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(0)));
-			ShortestPathSolution solu_dist = D_road_dist.run();
+			AStarAlgorithm A_road_dist = new AStarAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(0)));
+			ShortestPathSolution solu_dist = A_road_dist.run();
 			
 			//Shortest path, only roads open for cars
-			DijkstraAlgorithm D_road_dist_car = new DijkstraAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(1)));
-			ShortestPathSolution solu_dist_car = D_road_dist_car.run();
+			AStarAlgorithm A_road_dist_car = new AStarAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(1)));
+			ShortestPathSolution solu_dist_car = A_road_dist_car.run();
+			
 			
 			//Fastest path, all roads allowed
-			DijkstraAlgorithm D_road_temps = new DijkstraAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(2)));
-			ShortestPathSolution solu_temps = D_road_temps.run();
+			AStarAlgorithm A_road_temps = new AStarAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(2)));
+			ShortestPathSolution solu_temps = A_road_temps.run();
 			
 			//Fastest path, only roads open for cars
-			DijkstraAlgorithm D_road_temps_car = new DijkstraAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(3)));
-			ShortestPathSolution solu_temps_car = D_road_temps_car.run();
+			AStarAlgorithm A_road_temps_car = new AStarAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(3)));
+			ShortestPathSolution solu_temps_car = A_road_temps_car.run();
 			
 			//Fastest path for pedestrian
-			DijkstraAlgorithm D_road_temps_ped = new DijkstraAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(4)));
-			ShortestPathSolution solu_temps_ped = D_road_temps_ped.run();
+			AStarAlgorithm A_road_temps_ped = new AStarAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(4)));
+			ShortestPathSolution solu_temps_ped = A_road_temps_ped.run();
 			
 			//on vérifie que la solution en temps a effectivement une durée de trajet plus courte que la solution en distance et inversément pour la distance
 			assertEquals(solu_temps.getPath().getMinimumTravelTime()<=solu_dist.getPath().getMinimumTravelTime(),true);
 			assertEquals(solu_temps.getPath().getLength()>=solu_dist.getPath().getLength(),true);
- 
+ 			
+			
 			if(solu_dist.isFeasible()) {
 				nb_test0++;
 				BellmanFordAlgorithm B_road_dist = new BellmanFordAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(0)));
@@ -169,12 +167,15 @@ public class DijkstraAlgorithmTest {
 				assertEquals(solu_dist_car.getPath().getLength(),soluB_dist_car.getPath().getLength(),0.001);
 		        assertEquals(solu_dist_car.getPath().isValid(),true);
 			}
+			
+			
 			if(solu_temps.isFeasible()) {
 				nb_test2++;
 				BellmanFordAlgorithm B_road_temps = new BellmanFordAlgorithm(new ShortestPathData(graph,node_list.get(origine),node_list.get(destination), arcInsp.get(2)));
 				ShortestPathSolution soluB_temps = B_road_temps.run();
 				
 				//MODE 2
+				System.out.println(solu_temps.getPath().getMinimumTravelTime() + " " + soluB_temps.getPath().getMinimumTravelTime());
 				assertEquals(solu_temps.getPath().getMinimumTravelTime(),soluB_temps.getPath().getMinimumTravelTime(),0.0001);
 				assertEquals(solu_temps.getPath().getLength(),soluB_temps.getPath().getLength(),0.0001);
 		        assertEquals(solu_temps.getPath().isValid(),true);
@@ -197,11 +198,12 @@ public class DijkstraAlgorithmTest {
 				ShortestPathSolution soluB_temps_ped = B_road_temps_ped.run();
 				
 				//MODE 4
+				System.out.println(solu_temps_ped.getPath().getMinimumTravelTime() + " " + soluB_temps_ped.getPath().getMinimumTravelTime());
 				assertEquals(solu_temps_ped.getPath().getMinimumTravelTime(),soluB_temps_ped.getPath().getMinimumTravelTime(),0.0001);
 				assertEquals(solu_temps_ped.getPath().getLength(),soluB_temps_ped.getPath().getLength(),0.0001);
 		        assertEquals(solu_temps_ped.getPath().isValid(),true);
 			}
-
+			
 			
 			
 		}
@@ -230,11 +232,12 @@ public class DijkstraAlgorithmTest {
 
 	
 		
-		DijkstraAlgorithm D_road_dist = new DijkstraAlgorithm(new ShortestPathData(graph2,node_list2.get(origine),node_list2.get(destination), arcInsp.get(0)));
-		ShortestPathSolution solu_dist = D_road_dist.run();
+		AStarAlgorithm A_road_dist = new AStarAlgorithm(new ShortestPathData(graph2,node_list2.get(origine),node_list2.get(destination), arcInsp.get(0)));
+		ShortestPathSolution solu_dist = A_road_dist.run();
 		
-		DijkstraAlgorithm D_road_temps = new DijkstraAlgorithm(new ShortestPathData(graph2,node_list2.get(origine),node_list2.get(destination), arcInsp.get(2)));
-		ShortestPathSolution solu_temps = D_road_temps.run();
+		
+		AStarAlgorithm A_road_temps = new AStarAlgorithm(new ShortestPathData(graph2,node_list2.get(origine),node_list2.get(destination), arcInsp.get(2)));
+		ShortestPathSolution solu_temps = A_road_temps.run();
 		
 		
 		if(solu_dist.isFeasible()) {
@@ -243,17 +246,16 @@ public class DijkstraAlgorithmTest {
 	       	
 		}
 		
+		
 		if(solu_temps.isFeasible()) {
 			assertEquals(solu_temps.getPath().isValid(),true);
 		}
 		
-		if(solu_temps.isFeasible() && solu_dist.isFeasible()) {
-			System.out.println(origine +" " + destination);
+		
+		if(solu_dist.isFeasible()&&solu_temps.isFeasible()) {
 			//on vérifie que la solution en temps a effectivement une durée de trajet plus courte que la solution en distance et inversément pour la distance
-			System.out.println(solu_temps.getPath().getMinimumTravelTime() + " " + solu_dist.getPath().getMinimumTravelTime());
-			assertTrue((solu_temps.getPath().getMinimumTravelTime())<=(solu_dist.getPath().getMinimumTravelTime()));
-
-			assertTrue(solu_temps.getPath().getLength()>=solu_dist.getPath().getLength());
+			assertEquals(solu_temps.getPath().getMinimumTravelTime()<=solu_dist.getPath().getMinimumTravelTime(),true);
+			assertEquals(solu_temps.getPath().getLength()>=solu_dist.getPath().getLength(),true);
 			
 			for(Arc a : solu_dist.getPath().getArcs()) {
 				DijkstraAlgorithm D_road2 = new DijkstraAlgorithm(new ShortestPathData(graph2,a.getDestination(),node_list2.get(destination), arcInsp.get(0)));
@@ -272,5 +274,14 @@ public class DijkstraAlgorithmTest {
 		reader2.close();
 
 	}
+	
+	
+	
+	
+    
+  
+
 
 }
+
+

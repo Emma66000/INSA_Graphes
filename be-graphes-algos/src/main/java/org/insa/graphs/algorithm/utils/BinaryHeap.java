@@ -121,6 +121,10 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
 
     public boolean isValid() {
     	BinaryHeap<E> copie = new BinaryHeap<E>(this);
+    	if(copie.isEmpty()) {
+    		return true;
+    	}
+    	
     	E min = copie.deleteMin();
     	while (!(copie.isEmpty())) {
     		E ancien = min;
@@ -130,6 +134,7 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     		}
     	}
     	return true;
+    	
     }
     
     @Override

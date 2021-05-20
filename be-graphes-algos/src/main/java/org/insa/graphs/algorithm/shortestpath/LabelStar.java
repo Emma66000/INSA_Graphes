@@ -15,6 +15,7 @@ public class LabelStar extends Label{
 	}
 	
 	public float getTotalCost() {
+		
 		return (this.getCost() + this.cout_dest);
 	}
 }

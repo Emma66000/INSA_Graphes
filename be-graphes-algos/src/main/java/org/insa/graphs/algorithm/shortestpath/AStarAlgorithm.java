@@ -26,7 +26,8 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
 		if(data.getMode()==Mode.LENGTH) {
 			return  new LabelStar(n.getId(), (float)Point.distance(n.getPoint(),dest.getPoint()));
 		}else {
-			return  new LabelStar(n.getId(), (float)(Point.distance(n.getPoint(),dest.getPoint())*data.getMaximumSpeed()));
+			
+			return  new LabelStar(n.getId(), (float)(Point.distance(n.getPoint(),dest.getPoint())/((float)data.getGraph().getGraphInformation().getMaximumSpeed()/3.6)));
 		}
 		
 		
